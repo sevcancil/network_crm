@@ -1,0 +1,19 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. SSL (HTTPS) ZORUNLULUĞU
+    # Eğer HTTPS kapalıysa, trafiği HTTPS'e yönlendir (301 Kalıcı Yönlendirme)
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # 2. DOSYA LİSTELEMEYİ KAPAT
+    # Klasörlerin içinde index.php yoksa dosyaların listelenmesini engeller (Güvenlik)
+    Options -Indexes
+</IfModule>
+
+# 3. HASSAS DOSYALARA ERİŞİMİ ENGELLE
+# Tarayıcıdan config/db.php yazılsa bile erişilemez
+<FilesMatch "db.php">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

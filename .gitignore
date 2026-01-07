@@ -1,0 +1,25 @@
+# --- GÜVENLİK (ÖNEMLİ) ---
+# Veritabanı bağlantı dosyasını asla GitHub'a atma!
+config/db.php
+
+# --- KULLANICI DOSYALARI ---
+# Yüklenen resimler/dosyalar repoda olmamalı (Localdeki test resimleri gitmesin)
+uploads/
+# Ancak uploads klasörünün kendisi gitsin istiyorsan, içine boş bir .gitkeep dosyası koyup şunu ekle:
+!uploads/.gitkeep
+
+# --- SİSTEM DOSYALARI ---
+# Mac ve Windows'un oluşturduğu gereksiz önbellek dosyaları
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- EDİTÖR AYARLARI ---
+# VS Code, PHPStorm vb. ayar klasörleri
+.vscode/
+.idea/
+
+# --- LOGLAR ---
+# Hata kayıtları
+error_log
+*.log
