@@ -1,9 +1,9 @@
 <?php
-// Dosya: persons/export.php
+// Dosya: pages/export.php
 
 require_once '../config/db.php';
 
-// Dosya ismini belirleyelim (Örn: kisiler_listesi_20251216.xls)
+// Dosya ismini belirleyelim
 $filename = "kisiler_listesi_" . date('Ymd') . ".xls";
 
 // Excel Header'larını Gönderiyoruz
@@ -12,24 +12,24 @@ header("Content-Disposition: attachment; filename=\"$filename\"");
 header("Pragma: no-cache");
 header("Expires: 0");
 
-// Verileri Çekiyoruz (Şirket adını da JOIN ile alıyoruz)
-// Eğer admin değilse sadece kendi departmanını çekmesi gibi filtreler eklenebilir.
-// Şimdilik admin mantığıyla hepsini çekiyorum.
-$sql = "SELECT p.*, c.name as company_name 
+// Verileri Çekiyoruz
+// GÜNCELLEME: users tablosuyla JOIN yapıldı ve creator_name çekildi
+$sql = "SELECT p.*, c.name as company_name, u.username as creator_name 
         FROM persons p 
         LEFT JOIN companies c ON p.company_id = c.id 
+        LEFT JOIN users u ON p.created_by_user_id = u.id
         ORDER BY p.name ASC";
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $persons = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// --- EXCEL İÇERİĞİ (HTML TABLOSU OLARAK) ---
+// --- EXCEL İÇERİĞİ ---
 ?>
 <html xmlns:x="urn:schemas-microsoft-com:office:excel">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
-        /* Excel'de görünecek basit stiller */
         table { border-collapse: collapse; width: 100%; }
         th { background-color: #f8f9fa; color: #000; font-weight: bold; border: 1px solid #ddd; }
         td { border: 1px solid #ddd; vertical-align: top; }
@@ -53,7 +53,7 @@ $persons = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <th>Açık Adres</th>
                 <th>Durum</th>
                 <th>Kayıt Tarihi</th>
-            </tr>
+                <th>Kayıt Açan</th> </tr>
         </thead>
         <tbody>
             <?php foreach($persons as $row): ?>
@@ -71,6 +71,8 @@ $persons = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?php echo htmlspecialchars($row['full_address']); ?></td>
                 <td><?php echo $row['is_active'] ? 'Aktif' : 'Pasif'; ?></td>
                 <td><?php echo date('d.m.Y H:i', strtotime($row['created_at'])); ?></td>
+                
+                <td><?php echo htmlspecialchars($row['creator_name'] ?? '-'); ?></td>
             </tr>
             <?php endforeach; ?>
         </tbody>

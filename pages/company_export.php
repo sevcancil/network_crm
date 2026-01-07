@@ -1,8 +1,7 @@
 <?php
-// Dosya: companies/export.php
+// Dosya: pages/company_export.php
 
 require_once '../config/db.php';
-
 
 // Dosya ismini belirleyelim
 $filename = "sirket_listesi_" . date('Ymd') . ".xls";
@@ -13,8 +12,14 @@ header("Content-Disposition: attachment; filename=\"$filename\"");
 header("Pragma: no-cache");
 header("Expires: 0");
 
-// Verileri Çekiyoruz (Sadece aktif şirketleri alıyoruz, index.php ile tutarlı olsun)
-$sql = "SELECT * FROM companies WHERE is_active = 1 ORDER BY name ASC";
+// Verileri Çekiyoruz
+// GÜNCELLEME: users tablosuyla JOIN yapıldı ve creator_name (Kullanıcı Adı) çekildi
+$sql = "SELECT c.*, u.username as creator_name 
+        FROM companies c 
+        LEFT JOIN users u ON c.created_by_user_id = u.id 
+        WHERE c.is_active = 1 
+        ORDER BY c.name ASC";
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $companies = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -39,7 +44,7 @@ $companies = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <th>Vergi No</th>
                 <th>Adres</th>
                 <th>Kayıt Tarihi</th>
-            </tr>
+                <th>Kayıt Açan</th> </tr>
         </thead>
         <tbody>
             <?php foreach($companies as $row): ?>
@@ -51,6 +56,8 @@ $companies = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td style="mso-number-format:'\@'"><?php echo htmlspecialchars($row['tax_no']); ?></td>
                 <td><?php echo htmlspecialchars($row['address']); ?></td>
                 <td><?php echo date('d.m.Y', strtotime($row['created_at'])); ?></td>
+                
+                <td><?php echo htmlspecialchars($row['creator_name'] ?? '-'); ?></td>
             </tr>
             <?php endforeach; ?>
         </tbody>

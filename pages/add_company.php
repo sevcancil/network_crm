@@ -35,11 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!empty($name)) {
         try {
-            // SQL Sorgusu Güncellendi (email, tax_no, logo eklendi)
-            $sql = "INSERT INTO companies (name, phone, email, tax_no, address, logo) VALUES (?, ?, ?, ?, ?, ?)";
+            // YENİ: Oturum açan kullanıcının ID'sini alıyoruz
+            $creator_id = $_SESSION['user_id']; 
+
+            // SQL GÜNCELLENDİ: created_by_user_id eklendi
+            $sql = "INSERT INTO companies (name, phone, email, tax_no, address, logo, created_by_user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
             
-            if ($stmt->execute([$name, $phone, $email, $tax_no, $address, $logo_name])) {
+            // PARAMETRELER GÜNCELLENDİ: $creator_id eklendi
+            if ($stmt->execute([$name, $phone, $email, $tax_no, $address, $logo_name, $creator_id])) {
                 echo "<script>
                         alert('Şirket başarıyla eklendi!'); 
                         window.location.href = 'companies.php';
@@ -47,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit;
             }
         } catch (PDOException $e) {
+            // EKSİK OLAN CATCH BLOĞU EKLENDİ
             $error = "Veritabanı hatası: " . $e->getMessage();
         }
     } else {

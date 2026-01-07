@@ -18,9 +18,10 @@ if (!isAdmin()) {
 }
 
 // Verileri Çek
-$sql = "SELECT p.*, c.name as company_name 
+$sql = "SELECT p.*, c.name as company_name, u.username as creator_name 
         FROM persons p 
         LEFT JOIN companies c ON p.company_id = c.id 
+        LEFT JOIN users u ON p.created_by_user_id = u.id
         $whereClause 
         ORDER BY p.id DESC LIMIT $limit OFFSET $offset";
 $stmt = $pdo->prepare($sql);
@@ -52,6 +53,7 @@ $persons = $stmt->fetchAll();
                         <th>Telefon</th>
                         <th>Bölüm</th>
                         <th>Tam Adres</th>
+                        <th>Kayıt Açan</th>
                         <th>İşlemler</th>
                     </tr>
                 </thead>
@@ -68,6 +70,12 @@ $persons = $stmt->fetchAll();
                             <?php if(isAdmin() || $person['department'] == $_SESSION['department']): ?>
                                 <a href="delete_person.php?id=<?php echo $person['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Pasife almak istediğine emin misin?')"><i class="fas fa-trash"></i></a>
                             <?php endif; ?>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border">
+                                <i class="fas fa-user-edit"></i> 
+                                <?php echo htmlspecialchars($person['creator_name'] ?? 'Bilinmiyor'); ?>
+                            </span>
                         </td>
                     </tr>
                     <?php endforeach; ?>
