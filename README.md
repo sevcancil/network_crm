@@ -128,6 +128,7 @@ network_crm/
 Bu proje **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** ile lisanslanmıştır.
 
 ❌ **Ticari Kullanım Yasaktır:** Bu yazılımı satamaz veya ticari bir ürünün parçası olarak kullanamazsınız.
+
 ✅ **Kişisel ve Eğitim:** Kaynak göstermek şartıyla (Atıf) kişisel projelerinizde inceleyebilir ve geliştirebilirsiniz.
 
 Detaylar için `LICENSE` dosyasına bakınız.
